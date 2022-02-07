@@ -43,9 +43,15 @@ server.get('/api/users/:id', (req, res) => {
 		});
 });
 
-// | DELETE | /api/users/:id | Removes the user with the specified `id` and returns the deleted user.                                 |
+// ✅ | DELETE | /api/users/:id | Removes the user with the specified `id` and returns the deleted user.                                 |
 server.delete('/api/users/:id', (req, res) => {
-	
+	users.remove(req.params.id)
+		.then(removedUser => {
+			res.json(removedUser);
+		})
+		.catch(() => {
+			res.status(500).json({message: 'Could not delete user.'});
+		});
 });
 
 // | PUT    | /api/users/:id | Updates the user with the specified `id` using data from the `request body`. Returns the modified user |

@@ -4,21 +4,17 @@ const users = require('./users/model');
 
 // BUILD YOUR SERVER HERE
 const server = express();
+server.use(express.json());
 
-// | POST   | /api/users     | Creates a user using the information sent inside the `request body`.                                   |
-server.post('/api/users', (req, res) => {
-	// Destructure the request
-	const body = req.body;
-	
-	users.insert(body)
-			.then((newUser) => {
-				// Return newly created user
-				res.status(201).json(newUser);
-			})
-			.catch(() => {
-				// Or return error if user could not be created
-				res.status(500).json({message: 'Could not create user.'});
-			});
+// ✅ | POST   | /api/users     | Creates a user using the information sent inside the `request body`.                                   |
+server.post('/api/users', async (req, res) => {
+	console.log(req.body);
+	try {
+		const newUser = await users.insert(req.body);
+		res.status(201).json(newUser);
+	} catch (err) {
+		res.status(500).json({message: 'Could not create user.'});
+	};
 });
 
 // ✅ | GET    | /api/users     | Returns an array users.                                                                                |
@@ -35,8 +31,8 @@ server.get('/api/users', (req, res) => {
 // ✅ | GET    | /api/users/:id | Returns the user object with the specified `id`.                                                       |
 server.get('/api/users/:id', (req, res) => {
 	users.findById(req.params.id)
-		.then(user => {
-			res.json(user);
+		.then(returnedUser => {
+			res.json(returnedUser);
 		})
 		.catch(() => {
 			res.status(500).json({message: 'Could not find user.'});
@@ -54,9 +50,20 @@ server.delete('/api/users/:id', (req, res) => {
 		});
 });
 
-// | PUT    | /api/users/:id | Updates the user with the specified `id` using data from the `request body`. Returns the modified user |
-server.put('/api/users/:id', (req, res) => {
-
+// ✅ | PUT    | /api/users/:id | Updates the user with the specified `id` using data from the `request body`. Returns the modified user |
+server.put('/api/users/:id', async (req, res) => {
+	try {
+		const updatedUser = await users.update(req.params.id, req.body);
+		if (updatedUser === null) {
+			res.status(404).json({message: 'Could not find user.'});
+			return;
+		} else {
+			res.json(updatedUser);
+		}
+	}
+	catch(e) {
+		res.status(500).json({message: 'Could not update user.'});
+	}
 });
 
 

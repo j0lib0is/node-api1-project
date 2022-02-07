@@ -1,3 +1,9 @@
-// BUILD YOUR SERVER HERE
+// IMPORTS
+const express = require('express');
 
-module.exports = {}; // EXPORT YOUR SERVER instead of {}
+// BUILD YOUR SERVER HERE
+const server = express();
+
+
+
+module.exports = server; // EXPORT YOUR SERVER instead of {}

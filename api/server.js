@@ -8,12 +8,15 @@ server.use(express.json());
 
 // ✅ | POST   | /api/users     | Creates a user using the information sent inside the `request body`.                                   |
 server.post('/api/users', async (req, res) => {
-	console.log(req.body);
-	try {
-		const newUser = await users.insert(req.body);
-		res.status(201).json(newUser);
-	} catch (err) {
-		res.status(500).json({message: 'Could not create user.'});
+	if (!req.body.name || !req.body.bio) {
+		res.status(400).json({message: 'Please provide name and bio for the user'});
+	} else {
+		try {
+			const newUser = await users.insert(req.body);
+			res.status(201).json(newUser);
+		} catch (err) {
+			res.status(500).json({message: 'There was an error while saving the user to the database'});
+		};
 	};
 });
 

@@ -27,7 +27,7 @@ server.get('/api/users', (req, res) => {
 			res.json(users);
 		})
 		.catch(() => {
-			res.status(500).json({message: 'Could not find users.'});
+			res.status(500).json({message: 'The users information could not be retrieved'});
 		});
 });
 
@@ -35,10 +35,14 @@ server.get('/api/users', (req, res) => {
 server.get('/api/users/:id', (req, res) => {
 	users.findById(req.params.id)
 		.then(returnedUser => {
-			res.json(returnedUser);
+			if (returnedUser === null) {
+				res.status(404).json({message: 'The user with the specified ID does not exist'});
+			} else {
+				res.json(returnedUser);
+			}
 		})
 		.catch(() => {
-			res.status(500).json({message: 'Could not find user.'});
+			res.status(500).json({message: 'The user information could not be retrieved'});
 		});
 });
 
